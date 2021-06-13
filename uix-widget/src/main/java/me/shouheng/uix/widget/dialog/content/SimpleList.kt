@@ -3,6 +3,7 @@ package me.shouheng.uix.widget.dialog.content
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.LinearLayoutManager
+import me.shouheng.uix.common.anno.BeautyDialogDSL
 import me.shouheng.uix.common.bean.TextStyleBean
 import me.shouheng.uix.widget.R
 import me.shouheng.uix.widget.databinding.UixDialogContentListSimpleBinding
@@ -44,11 +45,12 @@ class SimpleList private constructor(): ViewBindingDialogContent<UixDialogConten
         this.dialog = dialog
     }
 
+    @BeautyDialogDSL
     class Builder {
-        private var list: List<Item> = emptyList()
-        private var showIcon = true
-        private var textStyle = GlobalConfig.textStyle
-        private var itemClickListener: ((dialog: BeautyDialog, item: Item) -> Unit)? = null
+        var list: List<Item> = emptyList()
+        var showIcon = true
+        var textStyle = GlobalConfig.textStyle
+        var onItemSelected: ((dialog: BeautyDialog, item: Item) -> Unit)? = null
 
         fun setList(list: List<Item>): Builder {
             this.list = list
@@ -66,7 +68,7 @@ class SimpleList private constructor(): ViewBindingDialogContent<UixDialogConten
         }
 
         fun setOnItemClickListener(itemClickListener: (dialog: BeautyDialog, item: Item) -> Unit): Builder {
-            this.itemClickListener = itemClickListener
+            this.onItemSelected = itemClickListener
             return this
         }
 
@@ -75,7 +77,7 @@ class SimpleList private constructor(): ViewBindingDialogContent<UixDialogConten
             simpleList.list = list
             simpleList.textStyle = textStyle
             simpleList.showIcon = showIcon
-            simpleList.itemClickListener = itemClickListener
+            simpleList.itemClickListener = onItemSelected
             return simpleList
         }
     }
@@ -93,3 +95,9 @@ class SimpleList private constructor(): ViewBindingDialogContent<UixDialogConten
         fun builder(): Builder = Builder()
     }
 }
+
+/** Create a simple list by DSL. */
+inline fun simpleList(init: SimpleList.Builder.() -> Unit): SimpleList =
+    SimpleList.Builder()
+        .apply(init)
+        .build()

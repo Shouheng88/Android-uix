@@ -17,6 +17,7 @@ import me.shouheng.uix.common.utils.UImage
 import me.shouheng.uix.widget.button.NormalButton
 import me.shouheng.uix.widget.databinding.UixDialogFooterSimpleBinding
 import me.shouheng.uix.widget.dialog.BeautyDialog
+import me.shouheng.uix.common.anno.BeautyDialogDSL
 import me.shouheng.uix.widget.dialog.content.IDialogContent
 import me.shouheng.uix.widget.dialog.title.IDialogTitle
 import me.shouheng.utils.ktx.gone
@@ -44,11 +45,16 @@ class SimpleFooter private constructor(): ViewBindingDialogFooter<UixDialogFoote
     private var rightTextStyle = GlobalConfig.rightTextStyle
 
     private var dividerColor: Int? = null
-    private var clickListener: ((dialog: BeautyDialog,
-                                 position: Int,
-                                 title: IDialogTitle?,
-                                 content: IDialogContent?) -> Unit)? = null
+    private var clickListener: ((
+        dialog: BeautyDialog,
+        position: Int,
+        title: IDialogTitle?,
+        content: IDialogContent?
+    ) -> Unit)? = null
     private var onClickListener: OnClickListener? = null
+    private var onLeft: ((dlg: BeautyDialog, title: IDialogTitle?, content: IDialogContent?) -> Unit)? = null
+    private var onMiddle: ((dlg: BeautyDialog, title: IDialogTitle?, content: IDialogContent?) -> Unit)? = null
+    private var onRight: ((dlg: BeautyDialog, title: IDialogTitle?, content: IDialogContent?) -> Unit)? = null
 
     override fun doCreateView(ctx: Context) {
         binding.tvLeft.text = leftText
@@ -62,14 +68,17 @@ class SimpleFooter private constructor(): ViewBindingDialogFooter<UixDialogFoote
         binding.tvLeft.setOnClickListener {
             onClickListener?.onClick(dialog, BUTTON_POS_LEFT, dialogTitle, dialogContent)
             clickListener?.invoke(dialog, BUTTON_POS_LEFT, dialogTitle, dialogContent)
+            onLeft?.invoke(dialog, dialogTitle, dialogContent)
         }
         binding.tvMiddle.setOnClickListener {
             onClickListener?.onClick(dialog, BUTTON_POS_MIDDLE, dialogTitle, dialogContent)
             clickListener?.invoke(dialog, BUTTON_POS_MIDDLE, dialogTitle, dialogContent)
+            onMiddle?.invoke(dialog, dialogTitle, dialogContent)
         }
         binding.tvRight.setOnClickListener {
             onClickListener?.onClick(dialog, BUTTON_POS_RIGHT, dialogTitle, dialogContent)
             clickListener?.invoke(dialog, BUTTON_POS_RIGHT, dialogTitle, dialogContent)
+            onRight?.invoke(dialog, dialogTitle, dialogContent)
         }
 
         val cornerRadius = dialog.dialogCornerRadius.toFloat()
@@ -134,35 +143,57 @@ class SimpleFooter private constructor(): ViewBindingDialogFooter<UixDialogFoote
     }
 
     interface OnClickListener {
-        fun onClick(dialog: BeautyDialog,
-                    @BottomButtonPosition buttonPos: Int,
-                    dialogTitle: IDialogTitle?,
-                    dialogContent: IDialogContent?)
+        fun onClick(
+            dialog: BeautyDialog,
+            @BottomButtonPosition buttonPos: Int,
+            dialogTitle: IDialogTitle?,
+            dialogContent: IDialogContent?
+        )
     }
 
+    @BeautyDialogDSL
     class Builder {
 
-        @BottomButtonStyle
-        private var bottomStyle: Int? = BUTTON_STYLE_DOUBLE
+        @BottomButtonStyle var style: Int? = BUTTON_STYLE_DOUBLE
 
-        private var leftText: CharSequence? = null
-        private var leftTextStyle = GlobalConfig.leftTextStyle
-        private var middleText: CharSequence? = null
-        private var middleTextStyle = GlobalConfig.middleTextStyle
-        private var rightText: CharSequence? = null
-        private var rightTextStyle = GlobalConfig.rightTextStyle
+        var leftText: CharSequence? = null
+        var leftTextStyle = GlobalConfig.leftTextStyle
+        var middleText: CharSequence? = null
+        var middleTextStyle = GlobalConfig.middleTextStyle
+        var rightText: CharSequence? = null
+        var rightTextStyle = GlobalConfig.rightTextStyle
 
-        private var dividerColor: Int? = null
+        var dividerColor: Int? = null
 
-        private var clickListener: ((dialog: BeautyDialog,
-                                     position: Int,
-                                     title: IDialogTitle?,
-                                     content: IDialogContent?) -> Unit)? = null
+        var onClick: ((
+            dialog: BeautyDialog,
+            position: Int,
+            title: IDialogTitle?,
+            content: IDialogContent?) -> Unit
+        )? = null
 
-        private var onClickListener: OnClickListener? = null
+        var onClickListener: OnClickListener? = null
+
+        var onLeft: ((
+            dlg: BeautyDialog,
+            title: IDialogTitle?,
+            content: IDialogContent?
+        ) -> Unit)? = null
+
+        var onMiddle: ((
+            dlg: BeautyDialog,
+            title: IDialogTitle?,
+            content: IDialogContent?
+        ) -> Unit)? = null
+
+        var onRight: ((
+            dlg: BeautyDialog,
+            title: IDialogTitle?,
+            content: IDialogContent?
+        ) -> Unit)? = null
 
         fun setBottomStyle(@BottomButtonStyle bottomStyle: Int): Builder {
-            this.bottomStyle = bottomStyle
+            this.style = bottomStyle
             return this
         }
 
@@ -203,9 +234,14 @@ class SimpleFooter private constructor(): ViewBindingDialogFooter<UixDialogFoote
         }
 
         fun setOnClickListener(
-                clickListener: (dialog: BeautyDialog, position: Int, title: IDialogTitle?, content: IDialogContent?) -> Unit
+            clickListener: (
+                dialog: BeautyDialog,
+                position: Int,
+                title: IDialogTitle?,
+                content: IDialogContent?
+            ) -> Unit
         ): Builder {
-            this.clickListener = clickListener
+            this.onClick = clickListener
             return this
         }
 
@@ -222,10 +258,13 @@ class SimpleFooter private constructor(): ViewBindingDialogFooter<UixDialogFoote
             bottom.middleTextStyle = middleTextStyle
             bottom.rightText = rightText
             bottom.rightTextStyle = rightTextStyle
-            bottom.bottomStyle = bottomStyle
+            bottom.bottomStyle = style
             bottom.dividerColor = dividerColor
-            bottom.clickListener = clickListener
+            bottom.clickListener = onClick
             bottom.onClickListener = onClickListener
+            bottom.onLeft = onLeft
+            bottom.onMiddle = onMiddle
+            bottom.onRight = onRight
             return bottom
         }
     }
@@ -237,4 +276,11 @@ class SimpleFooter private constructor(): ViewBindingDialogFooter<UixDialogFoote
         /** 按钮底部的分割线的颜色 */
         @ColorInt var dividerColor: Int? = null
     }
+}
+
+/** Create a simple footer by DSL style. */
+inline fun simpleFooter(init: SimpleFooter.Builder.() -> Unit): SimpleFooter {
+    val builder = SimpleFooter.Builder()
+    builder.init()
+    return builder.build()
 }

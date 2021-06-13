@@ -3,13 +3,11 @@ package me.shouheng.uix.widget.dialog.content
 import android.content.Context
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import me.shouheng.uix.widget.R
+import me.shouheng.uix.common.anno.BeautyDialogDSL
 import me.shouheng.uix.widget.databinding.UixDialogContentListCustomBinding
 import me.shouheng.uix.widget.dialog.BeautyDialog
-import me.shouheng.uix.widget.rv.EmptySupportRecyclerView
 import me.shouheng.uix.widget.rv.EmptyView
 import me.shouheng.uix.widget.rv.IEmptyView
 
@@ -55,9 +53,10 @@ class CustomList private constructor(): ViewBindingDialogContent<UixDialogConten
         emptyView?.hide()
     }
 
+    @BeautyDialogDSL
     class Builder (context: Context) {
-        private var emptyView: IEmptyView? = EmptyView.Builder(context).build()
-        private var adapter: RecyclerView.Adapter<*>? = null
+        var emptyView: IEmptyView? = EmptyView.Builder(context).build()
+        var adapter: RecyclerView.Adapter<*>? = null
 
         fun setEmptyView(emptyView: IEmptyView): Builder {
             this.emptyView = emptyView
@@ -77,3 +76,9 @@ class CustomList private constructor(): ViewBindingDialogContent<UixDialogConten
         }
     }
 }
+
+/** Create a custom list content by DSL. */
+inline fun customList(context: Context, init: CustomList.Builder.() -> Unit): CustomList =
+    CustomList.Builder(context)
+        .apply(init)
+        .build()

@@ -5,6 +5,7 @@ import android.view.View
 import me.shouheng.uix.common.anno.AddressSelectLevel
 import me.shouheng.uix.common.anno.AddressSelectLevel.Companion.LEVEL_AREA
 import me.shouheng.uix.common.anno.AddressSelectLevel.Companion.LEVEL_CITY
+import me.shouheng.uix.common.anno.BeautyDialogDSL
 import me.shouheng.uix.common.bean.AddressBean
 import me.shouheng.uix.common.utils.UBiz
 import me.shouheng.uix.widget.R
@@ -28,7 +29,12 @@ class AddressContent: ViewBindingDialogContent<UixDialogContentAddressBinding>()
     private val rvList = mutableListOf<View>()
 
     @AddressSelectLevel private var maxLevel: Int = LEVEL_CITY
-    private var listener: ((dialog: BeautyDialog, province: String, city: String?, area: String?) -> Unit)? = null
+    private var listener: ((
+        dialog: BeautyDialog,
+        province: String,
+        city: String?,
+        area: String?
+    ) -> Unit)? = null
 
     override fun doCreateView(ctx: Context) {
         val list = UBiz.getAddressList()
@@ -99,30 +105,51 @@ class AddressContent: ViewBindingDialogContent<UixDialogContentAddressBinding>()
 
     fun getSelection(): Triple<String?, String?, String?> {
         return Triple<String?, String?, String?>(
-                binding.tvProvince.text.toString(),
-                binding.tvCity.text.toString(),
-                binding.tvArea.text.toString())
+            binding.tvProvince.text.toString(),
+            binding.tvCity.text.toString(),
+            binding.tvArea.text.toString())
     }
 
+    @BeautyDialogDSL
     class Builder {
-        @AddressSelectLevel private var maxLevel: Int = LEVEL_CITY
-        private var listener: ((dialog: BeautyDialog, province: String, city: String?, area: String?) -> Unit)? = null
+        @AddressSelectLevel var maxLevel: Int = LEVEL_CITY
+
+        var onSelected: ((
+            dialog: BeautyDialog,
+            province: String,
+            city: String?,
+            area: String?
+        ) -> Unit)? = null
 
         fun setMaxLevel(@AddressSelectLevel maxLevel: Int): Builder {
             this.maxLevel = maxLevel
             return this
         }
 
-        fun setOnAddressSelectedListener(listener: (dialog: BeautyDialog, province: String, city: String?, area: String?) -> Unit): Builder {
-            this.listener = listener
+        fun setOnAddressSelectedListener(
+            listener: (
+                dialog: BeautyDialog,
+                province: String,
+                city: String?,
+                area: String?
+            ) -> Unit
+        ): Builder {
+            this.onSelected = listener
             return this
         }
 
         fun build(): AddressContent {
             val content = AddressContent()
             content.maxLevel = maxLevel
-            content.listener = listener
+            content.listener = onSelected
             return content
         }
     }
+}
+
+/** Create address content by DSL. */
+inline fun addressContent(init: AddressContent.Builder.() -> Unit): AddressContent {
+    val builder = AddressContent.Builder()
+    builder.init()
+    return builder.build()
 }

@@ -5,6 +5,7 @@ import android.graphics.Typeface
 import android.support.annotation.ColorInt
 import android.support.annotation.Size
 import android.view.Gravity
+import me.shouheng.uix.common.anno.BeautyDialogDSL
 import me.shouheng.uix.widget.databinding.UixDialogContentSimpleBinding
 
 /**
@@ -29,12 +30,13 @@ class SimpleContent private constructor(): ViewBindingDialogContent<UixDialogCon
         contentColor?.let { binding.tv.setTextColor(it) }
     }
 
+    @BeautyDialogDSL
     class Builder {
-        private var content: CharSequence? = null
-        @ColorInt private var contentColor: Int? = GlobalConfig.contentTextColor
-        @Size private var contentSize: Float = GlobalConfig.contentTextSize
-        private var typeFace: Int = GlobalConfig.contentTypeFace
-        private var gravity: Int = GlobalConfig.contentGravity
+        var content: CharSequence? = null
+        @ColorInt var contentColor: Int? = GlobalConfig.contentTextColor
+        @Size var contentSize: Float = GlobalConfig.contentTextSize
+        var typeFace: Int = GlobalConfig.contentTypeFace
+        var gravity: Int = GlobalConfig.contentGravity
 
         fun setContent(content: CharSequence): Builder {
             this.content = content
@@ -86,3 +88,9 @@ class SimpleContent private constructor(): ViewBindingDialogContent<UixDialogCon
         var contentGravity: Int                   = Gravity.CENTER
     }
 }
+
+/** Create a simple content by DSL. */
+inline fun simpleContent(init: SimpleContent.Builder.() -> Unit): SimpleContent =
+    SimpleContent.Builder()
+        .apply(init)
+        .build()

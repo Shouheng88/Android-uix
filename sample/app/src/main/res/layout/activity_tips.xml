@@ -30,6 +30,11 @@
                 android:text="加载对话框 [可取消|长文本|安卓风格]"
                 style="@style/MenuItemButton"/>
 
+            <me.shouheng.uix.widget.button.NormalButton
+                android:id="@+id/btn_loading_sdl"
+                android:text="加载对话框 [不可取消|iOS风格|DSL 风格]"
+                style="@style/MenuItemButton"/>
+
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

@@ -26,7 +26,7 @@ import me.shouheng.uix.widget.text.NormalTextView
  * @author [WngShhng](mailto:shouheng2015@gmail.com)
  * @version 2020-01-12 17:56
  */
-class MessageDialog private constructor(builder: Builder) {
+class MessageDialog constructor(builder: Builder) {
 
     private val message: CharSequence?
     private var messageStyle: TextStyleBean = GlobalConfig.textStyle
@@ -41,7 +41,7 @@ class MessageDialog private constructor(builder: Builder) {
 
     init {
         message = builder.message
-        loadingStyle = builder.loadingStyle
+        loadingStyle = builder.style
         cancelable = builder.cancelable
         loading = builder.loading
         icon = builder.icon
@@ -79,12 +79,12 @@ class MessageDialog private constructor(builder: Builder) {
     class Builder {
         var message: CharSequence?      = null
         var messageStyle: TextStyleBean = GlobalConfig.textStyle
-        var loadingStyle: Int           = GlobalConfig.loadingStyle
+        var style: Int                  = GlobalConfig.loadingStyle
         var cancelable: Boolean         = GlobalConfig.cancelable
         var icon: Drawable?             = null
         var bgColor: Int                = GlobalConfig.bgColor
         var loading: Boolean            = GlobalConfig.loading
-        var borderRadius: Int         = GlobalConfig.bgBorderRadius
+        var borderRadius: Int           = GlobalConfig.bgBorderRadius
 
         fun withMessage(param: CharSequence): Builder {
             message = param
@@ -97,7 +97,7 @@ class MessageDialog private constructor(builder: Builder) {
         }
 
         fun withLoadingStyle(@LoadingStyle param: Int): Builder {
-            loadingStyle = param
+            style = param
             return this
         }
 
@@ -133,12 +133,13 @@ class MessageDialog private constructor(builder: Builder) {
 
     companion object {
 
-        fun showLoading(context: Context,
-                        msg: String,
-                        cancelable: Boolean = GlobalConfig.cancelable,
-                        isAnimation: Boolean = GlobalConfig.loading,
-                        icon: Drawable? = null,
-                        @LoadingStyle loadingStyle: Int = GlobalConfig.loadingStyle
+        fun showLoading(
+                context: Context,
+                msg: String,
+                cancelable: Boolean = GlobalConfig.cancelable,
+                isAnimation: Boolean = GlobalConfig.loading,
+                icon: Drawable? = null,
+                @LoadingStyle loadingStyle: Int = GlobalConfig.loadingStyle
         ): Dialog = Builder()
                 .withMessage(msg)
                 .withCancelable(cancelable)
@@ -147,12 +148,13 @@ class MessageDialog private constructor(builder: Builder) {
                 .withLoadingStyle(loadingStyle)
                 .build(context)
 
-        fun showLoading(context: Context,
-                        @StringRes msgResId: Int,
-                        cancelable: Boolean = GlobalConfig.cancelable,
-                        isAnimation: Boolean = GlobalConfig.loading,
-                        @DrawableRes iconResId: Int? = null,
-                        @LoadingStyle loadingStyle: Int = GlobalConfig.loadingStyle
+        fun showLoading(
+                context: Context,
+                @StringRes msgResId: Int,
+                cancelable: Boolean = GlobalConfig.cancelable,
+                isAnimation: Boolean = GlobalConfig.loading,
+                @DrawableRes iconResId: Int? = null,
+                @LoadingStyle loadingStyle: Int = GlobalConfig.loadingStyle
         ): Dialog = Builder()
                 .withMessage(URes.getString(msgResId))
                 .withCancelable(cancelable)
@@ -167,11 +169,12 @@ class MessageDialog private constructor(builder: Builder) {
 
         fun builder(): Builder = Builder()
 
-        fun builder(msg: String,
-                    cancelable: Boolean = GlobalConfig.cancelable,
-                    loading: Boolean = GlobalConfig.loading,
-                    icon: Drawable? = null,
-                    @LoadingStyle loadingStyle: Int = GlobalConfig.loadingStyle
+        fun builder(
+                msg: String,
+                cancelable: Boolean = GlobalConfig.cancelable,
+                loading: Boolean = GlobalConfig.loading,
+                icon: Drawable? = null,
+                @LoadingStyle loadingStyle: Int = GlobalConfig.loadingStyle
         ): Builder = Builder()
                 .withMessage(msg)
                 .withCancelable(cancelable)
@@ -179,21 +182,22 @@ class MessageDialog private constructor(builder: Builder) {
                 .withIcon(icon)
                 .withLoadingStyle(loadingStyle)
 
-        fun builder(@StringRes msgResId: Int,
-                    cancelable: Boolean = GlobalConfig.cancelable,
-                    loading: Boolean = GlobalConfig.loading,
-                    @DrawableRes iconResId: Int? = null,
-                    @LoadingStyle loadingStyle: Int = GlobalConfig.loadingStyle): Builder =
-                Builder()
-                        .withMessage(URes.getString(msgResId))
-                        .withCancelable(cancelable)
-                        .withLoading(loading)
-                        .withLoadingStyle(loadingStyle)
-                        .apply {
-                            if (iconResId != null) {
-                                this.withIcon(URes.getDrawable(iconResId))
-                            }
-                        }
+        fun builder(
+                @StringRes msgResId: Int,
+                cancelable: Boolean = GlobalConfig.cancelable,
+                loading: Boolean = GlobalConfig.loading,
+                @DrawableRes iconResId: Int? = null,
+                @LoadingStyle loadingStyle: Int = GlobalConfig.loadingStyle
+        ): Builder = Builder()
+                .withMessage(URes.getString(msgResId))
+                .withCancelable(cancelable)
+                .withLoading(loading)
+                .withLoadingStyle(loadingStyle)
+                .apply {
+                    if (iconResId != null) {
+                        this.withIcon(URes.getDrawable(iconResId))
+                    }
+                }
 
         fun hide(dialog: Dialog?) {
             if (dialog != null && dialog.isShowing) dialog.dismiss()
@@ -210,3 +214,22 @@ class MessageDialog private constructor(builder: Builder) {
         var bgBorderRadius: Int            = UView.dp2px(8f)
     }
 }
+
+/** Create a message dialog by DSL. */
+inline fun messageDialog(
+    context: Context,
+    init: MessageDialog.Builder.() -> Unit
+): Dialog =
+    MessageDialog.Builder()
+        .also(init)
+        .build(context)
+
+/** Create a message dialog by DSL. */
+@JvmName("showMessageDialog")
+inline fun Context.showMessage(
+    init: MessageDialog.Builder.() -> Unit
+): Dialog =
+    MessageDialog.Builder()
+        .also(init)
+        .build(this)
+        .apply { show() }

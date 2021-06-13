@@ -7,6 +7,7 @@ import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.inputmethod.EditorInfo
 import me.shouheng.uix.widget.databinding.UixDialogContentEditSimpleBinding
+import me.shouheng.uix.common.anno.BeautyDialogDSL
 import me.shouheng.uix.widget.dialog.footer.IDialogFooter
 import me.shouheng.uix.widget.dialog.title.IDialogTitle
 import me.shouheng.utils.ktx.gone
@@ -78,21 +79,22 @@ class SimpleEditor private constructor(): ViewBindingDialogContent<UixDialogCont
         this.dialogFooter = dialogFooter
     }
 
+    @BeautyDialogDSL
     class Builder {
-        private var content: String? = null
-        private var hint: String? = null
-        private var textColor: Int? = null
-        private var hintTextColor: Int? = null
-        private var lengthTextColor: Int? = null
-        private var bottomLineColor: Int? = null
-        private var textSize: Float = 16f
-        private var singleLine = false
-        private var numeric = false
-        private var inputRegex: String? = null
-        private var maxLength: Int? = null
-        private var maxLines: Int? = null
-        private var showLength = true
-        private var clearDrawable: Drawable? = null
+        var content: String? = null
+        var hint: String? = null
+        var textColor: Int? = null
+        var hintTextColor: Int? = null
+        var lengthTextColor: Int? = null
+        var bottomLineColor: Int? = null
+        var textSize: Float = 16f
+        var singleLine = false
+        var numeric = false
+        var inputRegex: String? = null
+        var maxLength: Int? = null
+        var maxLines: Int? = null
+        var showLength = true
+        var clearDrawable: Drawable? = null
 
         fun setContent(content: String): Builder {
             this.content = content
@@ -183,4 +185,11 @@ class SimpleEditor private constructor(): ViewBindingDialogContent<UixDialogCont
             return editor
         }
     }
+}
+
+/** Create a simple editor of DSL style. */
+inline fun simpleEditor(init: SimpleEditor.Builder.() -> Unit): SimpleEditor {
+    val builder = SimpleEditor.Builder()
+    builder.init()
+    return builder.build()
 }

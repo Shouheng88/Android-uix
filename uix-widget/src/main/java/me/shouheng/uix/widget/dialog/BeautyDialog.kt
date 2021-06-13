@@ -7,13 +7,16 @@ import android.os.Bundle
 import android.support.annotation.ColorInt
 import android.support.annotation.Px
 import android.support.v4.app.DialogFragment
+import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
+import me.shouheng.uix.common.anno.BeautyDialogDSL
 import me.shouheng.uix.common.anno.DialogPosition
 import me.shouheng.uix.common.anno.DialogPosition.Companion.POS_BOTTOM
 import me.shouheng.uix.common.anno.DialogPosition.Companion.POS_CENTER
@@ -178,49 +181,54 @@ class BeautyDialog : DialogFragment() {
         onDismissListener?.invoke(this)
     }
 
+    @BeautyDialogDSL
     class Builder {
-        private var iDialogTitle: IDialogTitle? = null
-        private var iDialogContent: IDialogContent? = null
-        private var iDialogFooter: IDialogFooter? = null
+        var dialogTitle: IDialogTitle? = null
+        var dialogContent: IDialogContent? = null
+        var dialogFooter: IDialogFooter? = null
 
-        private var dialogPosition: Int = POS_CENTER
-        private var dialogStyle: Int = STYLE_MATCH
-        private var dialogDarkStyle: Boolean = false
+        @DialogPosition var position: Int = POS_CENTER
+        @DialogStyle var style: Int = STYLE_MATCH
+        var dark: Boolean = false
 
-        private var outCancelable = GlobalConfig.outCancelable
-        private var backCancelable = GlobalConfig.backCancelable
+        var outCancelable = GlobalConfig.outCancelable
+        var backCancelable = GlobalConfig.backCancelable
         private var customBackground = false
 
-        private var onDismissListener: ((dialog: BeautyDialog) -> Unit)? = null
-        private var onShowListener: ((dialog: BeautyDialog) -> Unit)? = null
+        var onDismiss: ((dialog: BeautyDialog) -> Unit)? = null
+        var onShow: ((dialog: BeautyDialog) -> Unit)? = null
 
-        private var fixedHeight = 0
-        private var dialogMargin: Int = GlobalConfig.margin
-        private var dialogBackground: Drawable? = null
-        private var dialogCornerRadius: Int = GlobalConfig.cornerRadius
+        var height = 0
+        var margin: Int = GlobalConfig.margin
+        var background: Drawable? = null
+            set(value) {
+                field = value
+                customBackground = true
+            }
+        var cornerRadius: Int = GlobalConfig.cornerRadius
 
         fun setDialogTitle(iDialogTitle: IDialogTitle): Builder {
-            this.iDialogTitle = iDialogTitle
+            this.dialogTitle = iDialogTitle
             return this
         }
 
         fun setDialogContent(iDialogContent: IDialogContent): Builder {
-            this.iDialogContent = iDialogContent
+            this.dialogContent = iDialogContent
             return this
         }
 
         fun setDialogBottom(iDialogFooter: IDialogFooter): Builder {
-            this.iDialogFooter = iDialogFooter
+            this.dialogFooter = iDialogFooter
             return this
         }
 
         fun setDialogPosition(@DialogPosition dialogPosition: Int): Builder {
-            this.dialogPosition = dialogPosition
+            this.position = dialogPosition
             return this
         }
 
         fun setDialogStyle(@DialogStyle dialogStyle: Int): Builder {
-            this.dialogStyle = dialogStyle
+            this.style = dialogStyle
             return this
         }
 
@@ -235,29 +243,29 @@ class BeautyDialog : DialogFragment() {
         }
 
         fun onDismiss(onDismissListener: (dialog: BeautyDialog) -> Unit): Builder {
-            this.onDismissListener = onDismissListener
+            this.onDismiss = onDismissListener
             return this
         }
 
         fun onShow(onShowListener: (dialog: BeautyDialog) -> Unit): Builder {
-            this.onShowListener = onShowListener
+            this.onShow = onShowListener
             return this
         }
 
         /** 对话框"内容"的固定高度，单位 px */
         fun setFixedHeight(@Px fixedHeight: Int): Builder {
-            this.fixedHeight = fixedHeight
+            this.height = fixedHeight
             return this
         }
 
         /** 对话框边距，单位 px */
         fun setDialogMargin(dialogMargin: Int): Builder {
-            this.dialogMargin = dialogMargin
+            this.margin = dialogMargin
             return this
         }
 
         fun setDarkDialog(darkDialog: Boolean): Builder {
-            this.dialogDarkStyle = darkDialog
+            this.dark = darkDialog
             return this
         }
 
@@ -267,34 +275,34 @@ class BeautyDialog : DialogFragment() {
          * 2. 当传入的参数为 null 的时候对话框将不使用任何背景。
          */
         fun setDialogBackground(dialogBackground: Drawable?): Builder {
-            this.dialogBackground = dialogBackground
+            this.background = dialogBackground
             customBackground = true
             return this
         }
 
         /** 对话框的默认背景的边角的大小，单位：px */
         fun setDialogCornerRadius(dialogCornerRadius: Int): Builder {
-            this.dialogCornerRadius = dialogCornerRadius
+            this.cornerRadius = dialogCornerRadius
             return this
         }
 
         fun build(): BeautyDialog {
             val dialog = BeautyDialog()
-            dialog.iDialogTitle = iDialogTitle
-            dialog.iDialogContent = iDialogContent
-            dialog.iDialogFooter = iDialogFooter
-            dialog.dialogPosition = dialogPosition
-            dialog.dialogStyle = dialogStyle
-            dialog.dialogDarkStyle = dialogDarkStyle
+            dialog.iDialogTitle = dialogTitle
+            dialog.iDialogContent = dialogContent
+            dialog.iDialogFooter = dialogFooter
+            dialog.dialogPosition = position
+            dialog.dialogStyle = style
+            dialog.dialogDarkStyle = dark
             dialog.outCancelable = outCancelable
             dialog.backCancelable = backCancelable
-            dialog.onDismissListener = onDismissListener
-            dialog.onShowListener = onShowListener
-            dialog.fixedHeight = fixedHeight
-            dialog.dialogMargin = dialogMargin
-            dialog.dialogBackground = dialogBackground
+            dialog.onDismissListener = onDismiss
+            dialog.onShowListener = onShow
+            dialog.fixedHeight = height
+            dialog.dialogMargin = margin
+            dialog.dialogBackground = background
             dialog.customBackground = customBackground
-            dialog.dialogCornerRadius = dialogCornerRadius
+            dialog.dialogCornerRadius = cornerRadius
             return dialog
         }
     }
@@ -314,3 +322,29 @@ class BeautyDialog : DialogFragment() {
         var backCancelable                      = true
     }
 }
+
+/** Create a beauty dialog by DSL style creator. */
+inline fun createDialog(init: BeautyDialog.Builder.() -> Unit): BeautyDialog =
+    BeautyDialog.Builder()
+        .apply(init)
+        .build()
+
+/** Create and show dialog in activity. */
+inline fun AppCompatActivity.showDialog(
+    tag: String,
+    init: BeautyDialog.Builder.() -> Unit
+): BeautyDialog =
+    BeautyDialog.Builder()
+        .apply(init)
+        .build()
+        .apply { show(supportFragmentManager, tag) }
+
+/** Create and show dialog in fragment. */
+inline fun Fragment.showDialog(
+    tag: String,
+    init: BeautyDialog.Builder.() -> Unit
+): BeautyDialog =
+    BeautyDialog.Builder()
+        .apply(init)
+        .build()
+        .apply { show(fragmentManager, tag) }

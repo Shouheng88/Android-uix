@@ -10,6 +10,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import me.shouheng.uix.common.anno.BeautyDialogDSL
 import me.shouheng.uix.common.anno.EmptyViewState
 import me.shouheng.uix.common.anno.LoadingStyle
 import me.shouheng.uix.widget.R
@@ -173,24 +174,25 @@ class EmptyView : FrameLayout, IEmptyView {
 
     override fun getView(): View = this
 
+    @BeautyDialogDSL
     class Builder(private var context: Context) {
-        @LoadingStyle private var loadingStyle: Int = LoadingStyle.STYLE_ANDROID
-        @EmptyViewState private var emptyViewState: Int = EmptyViewState.STATE_LOADING
-        private var emptyImage: Int? = null
-        private var emptyTitle: String? = null
-        @ColorInt private var emptyTitleColor: Int? = null
-        private var emptyDetails: String? = null
-        @ColorInt private var emptyDetailsColor: Int? = null
-        private var emptyLoadingTips: String? = null
-        @ColorInt private var emptyLoadingTipsColor: Int? = null
+        @LoadingStyle var style: Int = LoadingStyle.STYLE_ANDROID
+        @EmptyViewState var state: Int = EmptyViewState.STATE_LOADING
+        var emptyImage: Int? = null
+        var emptyTitle: String? = null
+        @ColorInt var emptyTitleColor: Int? = null
+        var emptyDetails: String? = null
+        @ColorInt var emptyDetailsColor: Int? = null
+        var loadingTips: String? = null
+        @ColorInt var loadingTipsColor: Int? = null
 
         fun setLoadingStyle(@LoadingStyle loadingStyle: Int): Builder {
-            this.loadingStyle = loadingStyle
+            this.style = loadingStyle
             return this
         }
 
         fun setEmptyViewState(@LoadingStyle emptyViewState: Int): Builder {
-            this.emptyViewState = emptyViewState
+            this.state = emptyViewState
             return this
         }
 
@@ -220,27 +222,34 @@ class EmptyView : FrameLayout, IEmptyView {
         }
 
         fun setEmptyLoadingTips(emptyLoadingTips: String): Builder {
-            this.emptyLoadingTips = emptyLoadingTips
+            this.loadingTips = emptyLoadingTips
             return this
         }
 
         fun setEmptyLoadingTipsColor(@ColorInt emptyLoadingTipsColor: Int): Builder {
-            this.emptyLoadingTipsColor = emptyLoadingTipsColor
+            this.loadingTipsColor = emptyLoadingTipsColor
             return this
         }
 
         fun build(): EmptyView {
             val emptyView = EmptyView(context)
-            emptyView.loadingStyle = loadingStyle
-            emptyView.emptyViewState = emptyViewState
+            emptyView.loadingStyle = style
+            emptyView.emptyViewState = state
             emptyView.emptyImage = emptyImage
             emptyView.emptyTitle = emptyTitle
             emptyView.emptyTitleColor = emptyTitleColor
             emptyView.emptyDetails = emptyDetails
             emptyView.emptyDetailsColor = emptyDetailsColor
-            emptyView.emptyLoadingTips = emptyLoadingTips
-            emptyView.emptyLoadingTipsColor = emptyLoadingTipsColor
+            emptyView.emptyLoadingTips = loadingTips
+            emptyView.emptyLoadingTipsColor = loadingTipsColor
             return emptyView
         }
     }
+}
+
+/** Create an empty view by DSL. */
+inline fun emptyView(context: Context, init: EmptyView.Builder.() -> Unit): EmptyView {
+    val builder = EmptyView.Builder(context)
+    builder.init()
+    return builder.build()
 }

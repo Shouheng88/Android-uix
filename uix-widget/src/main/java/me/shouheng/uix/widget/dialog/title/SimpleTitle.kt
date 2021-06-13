@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.Gravity
 import me.shouheng.uix.common.bean.TextStyleBean
 import me.shouheng.uix.widget.databinding.UixDialogTitleSimpleBinding
+import me.shouheng.uix.common.anno.BeautyDialogDSL
 
 /**
  * Simple dialog title
@@ -21,9 +22,10 @@ class SimpleTitle private constructor(): ViewBindingDialogTitle<UixDialogTitleSi
         binding.tv.setStyle(titleStyle, GlobalConfig.titleStyle)
     }
 
+    @BeautyDialogDSL
     class Builder {
-        private var title: CharSequence? = null
-        private var titleStyle: TextStyleBean = GlobalConfig.titleStyle
+        var title: CharSequence? = null
+        var titleStyle: TextStyleBean = GlobalConfig.titleStyle
 
         fun setTitle(title: CharSequence): Builder {
             this.title = title
@@ -53,4 +55,11 @@ class SimpleTitle private constructor(): ViewBindingDialogTitle<UixDialogTitleSi
 
         fun builder(): Builder = Builder()
     }
+}
+
+/** Create a simple title dialog title by DSL. */
+inline fun simpleTitle(init: SimpleTitle.Builder.() -> Unit): SimpleTitle {
+    val builder = SimpleTitle.Builder()
+    builder.init()
+    return builder.build()
 }
