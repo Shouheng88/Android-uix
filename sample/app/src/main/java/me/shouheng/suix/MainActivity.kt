@@ -14,7 +14,9 @@ import me.shouheng.suix.setting.SettingFragment
 import me.shouheng.suix.tools.ToolsActivity
 import me.shouheng.suix.widget.LayoutActivity
 import me.shouheng.suix.widget.LayoutActivity2
+import me.shouheng.suix.widget.ListLayoutActivity
 import me.shouheng.suix.widget.WidgetActivity
+import me.shouheng.utils.ktx.onDebouncedClick
 import me.shouheng.utils.ktx.start
 import me.shouheng.vmlib.base.CommonActivity
 import me.shouheng.vmlib.comn.ContainerActivity
@@ -33,22 +35,23 @@ class MainActivity : CommonActivity<EmptyViewModel, ActivityMainBinding>() {
     override fun getLayoutResId(): Int = R.layout.activity_main
 
     override fun doCreateView(savedInstanceState: Bundle?) {
-        binding.btnTools.setOnClickListener { start(ToolsActivity::class.java) }
-        binding.btnDialogs.setOnClickListener { start(DialogActivity::class.java) }
-        binding.btnTips.setOnClickListener { start(TipsActivity::class.java) }
-        binding.btnPops.setOnClickListener { start(PopActivity::class.java) }
-        binding.btnMatisse.setOnClickListener { start(ImageSampleActivity::class.java) }
-        binding.btnWeb.setOnClickListener {
+        binding.btnTools.onDebouncedClick { start(ToolsActivity::class.java) }
+        binding.btnDialogs.onDebouncedClick { start(DialogActivity::class.java) }
+        binding.btnTips.onDebouncedClick { start(TipsActivity::class.java) }
+        binding.btnPops.onDebouncedClick { start(PopActivity::class.java) }
+        binding.btnMatisse.onDebouncedClick { start(ImageSampleActivity::class.java) }
+        binding.btnWeb.onDebouncedClick {
             ContainerActivity.open(COMMAND_LAUNCH_WEBVIEW).launch(this)
         }
-        binding.btnWidgets.setOnClickListener { start(WidgetActivity::class.java) }
-        binding.btnLayout.setOnClickListener { start(LayoutActivity::class.java) }
-        binding.btnLayout2.setOnClickListener { start(LayoutActivity2::class.java) }
-        binding.btnSetting.setOnClickListener {
+        binding.btnWidgets.onDebouncedClick { start(WidgetActivity::class.java) }
+        binding.btnLayout.onDebouncedClick { start(LayoutActivity::class.java) }
+        binding.btnLayout2.onDebouncedClick { start(LayoutActivity2::class.java) }
+        binding.btnLayoutList.onDebouncedClick { start(ListLayoutActivity::class.java) }
+        binding.btnSetting.onDebouncedClick {
             ContainerActivity.open(SettingFragment::class.java).launch(this)
         }
-        binding.btnAbout.setOnClickListener { start(me.shouheng.suix.comn.ContainerActivity::class.java) }
-        binding.btnCrash.setOnClickListener { produceException2() }
+        binding.btnAbout.onDebouncedClick { start(me.shouheng.suix.comn.ContainerActivity::class.java) }
+        binding.btnCrash.onDebouncedClick { produceException2() }
     }
 
     // 重现问题方式 1：利用反射修改字段属性

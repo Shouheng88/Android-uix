@@ -46,6 +46,7 @@
         <activity android:name=".widget.WidgetActivity" />
         <activity android:name=".widget.LayoutActivity" />
         <activity android:name=".widget.LayoutActivity2" />
+        <activity android:name=".widget.ListLayoutActivity" />
         <activity android:name=".layout.SlidingActivity" />
         <activity android:name=".image.CropActivity"/>
         <activity android:name=".image.ImageProcessActivity"/>

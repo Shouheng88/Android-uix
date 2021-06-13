@@ -34,8 +34,8 @@ import me.shouheng.uix.widget.dialog.showDialog
 import me.shouheng.uix.widget.dialog.title.SimpleTitle
 import me.shouheng.uix.widget.dialog.title.simpleTitle
 import me.shouheng.uix.widget.image.CircleImageView
+import me.shouheng.uix.widget.rv.createAdapter
 import me.shouheng.uix.widget.rv.emptyView
-import me.shouheng.uix.widget.rv.getAdapter
 import me.shouheng.uix.widget.rv.onItemDebouncedClick
 import me.shouheng.uix.widget.text.NormalTextView
 import me.shouheng.utils.app.ResUtils
@@ -250,17 +250,17 @@ class DialogActivity : CommonActivity<EmptyViewModel, ActivityDialogBinding>() {
                 }
                 dialogContent = simpleContent {
                     content = "君不見黃河之水天上來，奔流到海不復回。" +
-                            " 君不見高堂明鏡悲白髮，朝如青絲暮成雪。 " +
-                            "人生得意須盡歡，莫使金樽空對月。 " +
-                            "天生我材必有用，千金散盡還復來。" +
-                            " 烹羊宰牛且爲樂，會須一飲三百杯。" +
-                            " 岑夫子，丹丘生。將進酒，杯莫停。" +
-                            " 與君歌一曲，請君爲我側耳聽。 " +
-                            "鐘鼓饌玉不足貴，但願長醉不願醒。 " +
-                            "古來聖賢皆寂寞，惟有飲者留其名。" +
-                            " 陳王昔時宴平樂，斗酒十千恣讙謔。" +
-                            " 主人何為言少錢？徑須沽取對君酌。 " +
-                            "五花馬，千金裘。呼兒將出換美酒，與爾同銷萬古愁。"
+                        " 君不見高堂明鏡悲白髮，朝如青絲暮成雪。 " +
+                        "人生得意須盡歡，莫使金樽空對月。 " +
+                        "天生我材必有用，千金散盡還復來。" +
+                        " 烹羊宰牛且爲樂，會須一飲三百杯。" +
+                        " 岑夫子，丹丘生。將進酒，杯莫停。" +
+                        " 與君歌一曲，請君爲我側耳聽。 " +
+                        "鐘鼓饌玉不足貴，但願長醉不願醒。 " +
+                        "古來聖賢皆寂寞，惟有飲者留其名。" +
+                        " 陳王昔時宴平樂，斗酒十千恣讙謔。" +
+                        " 主人何為言少錢？徑須沽取對君酌。 " +
+                        "五花馬，千金裘。呼兒將出換美酒，與爾同銷萬古愁。"
                 }
             }
         }
@@ -306,12 +306,15 @@ class DialogActivity : CommonActivity<EmptyViewModel, ActivityDialogBinding>() {
     }
 
     private fun createCustomList() {
-        val adapter = getAdapter(R.layout.uix_dialog_content_list_simple_item, { helper, item: SimpleList.Item ->
-            val tv = helper.getView<NormalTextView>(me.shouheng.uix.widget.R.id.tv)
-            tv.text = item.content
-            item.gravity?.let { tv.gravity = it }
-            item.icon?.let { helper.setImageDrawable(me.shouheng.uix.widget.R.id.iv, it) }
-        }, emptyList())
+        val adapter = createAdapter <SimpleList.Item> {
+            layout = R.layout.uix_dialog_content_list_simple_item
+            converter = { helper, item: SimpleList.Item ->
+                val tv = helper.getView<NormalTextView>(me.shouheng.uix.widget.R.id.tv)
+                tv.text = item.content
+                item.gravity?.let { tv.gravity = it }
+                item.icon?.let { helper.setImageDrawable(me.shouheng.uix.widget.R.id.iv, it) }
+            }
+        }
         val ev = emptyView(context) {
             style = LoadingStyle.STYLE_IOS
             state = EmptyViewState.STATE_LOADING
@@ -420,23 +423,6 @@ class DialogActivity : CommonActivity<EmptyViewModel, ActivityDialogBinding>() {
             SimpleList.Item(15, "第 16 项", ResUtils.getDrawable(R.drawable.uix_loading))
         )
     }
-
-    private fun getSimpleGridData(): List<Int> {
-        return listOf(
-            colorOf(R.color.tool_item_color_1),
-            colorOf(R.color.tool_item_color_2),
-            colorOf(R.color.tool_item_color_3),
-            colorOf(R.color.tool_item_color_4),
-            colorOf(R.color.tool_item_color_5),
-            colorOf(R.color.tool_item_color_6),
-            colorOf(R.color.tool_item_color_7),
-            colorOf(R.color.tool_item_color_8),
-            colorOf(R.color.tool_item_color_9),
-            colorOf(R.color.tool_item_color_10),
-            colorOf(R.color.tool_item_color_11),
-            colorOf(R.color.tool_item_color_12)
-        )
-    }
 }
 
 inline fun onClick(v: View, crossinline onClicked: (v: View) -> Unit) {
@@ -449,4 +435,21 @@ inline fun onDebouncedClick(v: View, crossinline onClicked: (v: View) -> Unit) {
     v.onDebouncedClick {
         onClicked(it)
     }
+}
+
+fun getSimpleGridData(): List<Int> {
+    return listOf(
+        colorOf(R.color.tool_item_color_1),
+        colorOf(R.color.tool_item_color_2),
+        colorOf(R.color.tool_item_color_3),
+        colorOf(R.color.tool_item_color_4),
+        colorOf(R.color.tool_item_color_5),
+        colorOf(R.color.tool_item_color_6),
+        colorOf(R.color.tool_item_color_7),
+        colorOf(R.color.tool_item_color_8),
+        colorOf(R.color.tool_item_color_9),
+        colorOf(R.color.tool_item_color_10),
+        colorOf(R.color.tool_item_color_11),
+        colorOf(R.color.tool_item_color_12)
+    )
 }

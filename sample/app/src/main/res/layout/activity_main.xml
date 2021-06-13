@@ -62,6 +62,11 @@
                     style="@style/MenuItemButton"/>
 
                 <me.shouheng.uix.widget.button.NormalButton
+                    android:id="@+id/btn_layout_list"
+                    android:text="列表布局控件示例"
+                    style="@style/MenuItemButton"/>
+
+                <me.shouheng.uix.widget.button.NormalButton
                     android:id="@+id/btn_setting"
                     android:text="设置列表控件示例"
                     style="@style/MenuItemButton"/>

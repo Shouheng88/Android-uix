@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <me.shouheng.uix.widget.rv.EmptyView
+            android:id="@+id/ev"
+            app:empty_title="Empty"
+            app:empty_loading_style="android"
+            app:empty_loading_tips="Loading"
+            app:empty_loading_tips_text_color="?attr/colorAccent"
+            app:empty_state="loading"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <me.shouheng.uix.widget.rv.EmptySupportRecyclerView
+            android:id="@+id/rv"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <me.shouheng.uix.widget.rv.ListShadowView
+            android:id="@+id/v"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"/>
+
+    </FrameLayout>
+
+
+</layout>
