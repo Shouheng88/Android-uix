@@ -7,7 +7,7 @@
     <img src="https://img.shields.io/hexpm/l/plug.svg" alt="License" />
   </a>
   <a href="https://bintray.com/beta/#/easymark/Android/uix-core?tab=overview">
-    <img src="https://img.shields.io/maven-metadata/v/https/dl.bintray.com/easymark/Android/me/shouheng/ui/uix-core/maven-metadata.xml.svg" alt="Version" />
+    <img src="https://img.shields.io/maven-metadata/v/https/s01.oss.sonatype.org/service/local/repo_groups/public/content/com/github/Shouheng88/uix-core/maven-metadata.xml.svg" alt="Version" />
   </a>
   <a href="https://www.codacy.com/manual/Shouheng88/Android-uix?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Shouheng88/Android-uix&amp;utm_campaign=Badge_Grade">
     <img src="https://api.codacy.com/project/badge/Grade/f62b5a7fe6774ed1b04bf23bcaab9d69" alt="Code Grade"/>
@@ -37,15 +37,13 @@
 我们已经将该库上传到了 jCenter. 要使用该库，你首先需要做的是在项目的 Gradle 中加入 jcenter 仓库：
 
 ```gradle
-repositories {
-    jcenter()
-}
+repositories { mavenCentral() }
 ```
 
 然后，在你的项目依赖中直接引用我们的库：
 
 ```gradle
-implementation 'me.shouheng.ui:uix-core:latest-version'
+implementation 'com.github.Shouheng88:uix-core:latest-version'
 ```
 
 ### 2.2 项目初始化
